@@ -45,22 +45,22 @@ To avoid any legal concerns, we have renamed our project from EcoAssist to Addax
 </p>
 
 ## Cite AddaxAI in your research
-If you used AddaxAI in your research, please include the following citation, along with the models used to analyze your data. AddaxAI was previously known as EcoAssist, and the citation reflects its former name. Please cite as _'AddaxAI, previously known as EcoAssist (van Lunteren, 2023)'_.
+If you used AddaxAI in your research, please include the following citation, along with the models used to analyze your data.
 
 [Link to paper](https://joss.theoj.org/papers/10.21105/joss.05581)
 
 ```BibTeX
-@article{van_Lunteren_EcoAssist_2023,
-  author = {van Lunteren, Peter},
-  doi = {10.21105/joss.05581},
+@article{van Lunteren2023,
+  title = {AddaxAI: A no-code platform to train and deploy custom YOLOv5 object detection models},
+  author = {Peter van Lunteren},
   journal = {Journal of Open Source Software},
-  month = aug,
-  number = {88},
-  pages = {5581},
-  title = {{EcoAssist: A no-code platform to train and deploy custom YOLOv5 object detection models}},
-  url = {https://joss.theoj.org/papers/10.21105/joss.05581},
+  doi = {10.21105/joss.05581},
+  url = {https://doi.org/10.21105/joss.05581},
+  year = {2023},
+  publisher = {The Open Journal},
   volume = {8},
-  year = {2023}
+  number = {88},
+  pages = {5581}
 }
 ```
 
