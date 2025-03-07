@@ -4,7 +4,7 @@
 @REM the python script. With the Jan 2025 install update that is not neccesary anymore. But this script is still 
 @REM here so that Timelapse can run the same command as before and users don't have to update their Timelapse 
 @REM version when using a new AddaxAI version. 
-@REM Peter van Lunteren, 21 Feb 2025 (latest edit)
+@REM Peter van Lunteren, 7 Mar 2025 (latest edit)
 
 @REM set echo settings
 echo off
@@ -21,3 +21,9 @@ if "%1" == "timelapse" (
 ) else (
     %PYTHON_EXE% %ADDAXAI_GUI%
 )
+
+@REM keep terminal window open
+echo.
+echo In case of an error - copy-paste the above text and send it to the developer.
+echo.
+pause
