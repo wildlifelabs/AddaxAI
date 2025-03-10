@@ -1,5 +1,5 @@
 # Script to create an NSIS exe to install AddaxAI on Windows
-# Peter van Lunteren, last edit on 6 Jan 2025
+# Peter van Lunteren, last edit on 10 Mar 2025
 # Var VERSION and URL will be defined by github actions by adding a line above like '!define VERSION "v6.34"'
 
 # Name and output location for the installer
@@ -146,7 +146,14 @@ Section "Install"
     # compile pyrcc5 on local device
     DetailPrint "Compiling PyQT5..."
     nsExec::Exec '"$INSTDIR\envs\env-base\Scripts\pyrcc5.exe" -o "$INSTDIR\Human-in-the-loop\libs\resources.py" "$INSTDIR\Human-in-the-loop\resources.qrc"'
-    
+
+    # check if python.exe exists in the installation directory
+    IfFileExists "$INSTDIR\envs\env-base\python.exe" pythonExists pythonMissing
+    pythonMissing:
+        MessageBox MB_ICONEXCLAMATION "Python executable not found in $INSTDIR\envs\env-base\. Some security settings may have blocked the installation. Please try the following steps:$\r$\n1. Temporarily disable any antivirus software, VPNs, or proxy servers.$\r$\n2. Restart the installation.$\r$\n$\r$\nIf the issue persists, consider using the manual installation method at$\r$\n$\r$\nhttps://github.com/PetervanLunteren/AddaxAI/blob/main/install_files/windows/manual-install.md"
+        Abort
+    pythonExists:
+
     # Installation completed successfully
     DetailPrint "Installation completed successfully."
 
