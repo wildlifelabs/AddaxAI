@@ -96,13 +96,15 @@ jobs:
           $conda_exe clean --all --yes
 
           ### zip envs
-          tar -caf "env-speciesnet.tar.xz" "$HOME/envs/env-speciesnet"
+          cd ""$HOME/envs"
+          tar -caf "env-speciesnet.tar.xz" "env-speciesnet"
 
           ### upload 
           gsutil cp -r "env-speciesnet.tar.xz" gs://${{ env.BUCKET_NAME }}/latest/env-speciesnet.tar.xz
 
           ### remove
           rm "env-speciesnet.tar.xz"
+          rm -r "env-speciesnet"
          
 
 
