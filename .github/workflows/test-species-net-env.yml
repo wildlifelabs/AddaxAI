@@ -75,7 +75,7 @@ jobs:
 
           @REM env-speciesnet
           call "%conda_exe%" create -p "%envs_dir%\envs\env-speciesnet" python=3.11 -y
-          call "%conda_exe%" run -p "%envs_dir%\envs\env-pytorch" pip install --timeout=120 speciesnet
+          call "%conda_exe%" run -p "%envs_dir%\envs\env-speciesnet" pip install --timeout=120 speciesnet
 
 
           
