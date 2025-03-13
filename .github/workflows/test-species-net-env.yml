@@ -45,6 +45,16 @@ jobs:
           echo BUCKET_NAME=%BUCKET_NAME%>> %GITHUB_ENV%
           echo BUCKET_NAME is "%BUCKET_NAME%"
 
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GOOGLE_STORAGE_UPLOAD_KEY }}
+  
+      - name: Set up Google Cloud
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: github-file-storage
+
       - name: Install dependencies
         shell: cmd
         run: |
@@ -77,6 +87,9 @@ jobs:
           call "%conda_exe%" create -p "%envs_dir%\envs\env-speciesnet" python=3.11 -y
           call "%conda_exe%" run -p "%envs_dir%\envs\env-speciesnet" pip install --timeout=120 speciesnet
 
+          @REM create archive
+          "C:\Program Files\7-Zip\7z.exe" a -t7z -mx9 "env-speciesnet.7z" "%envs_dir%\envs\env-speciesnet\*"
 
-          
-          
+          @REM upload to google cloud          
+          gsutil cp -r "env-speciesnet.7z" gs://${{ env.BUCKET_NAME }}/latest/env-speciesnet.7z
+
