@@ -96,7 +96,7 @@ jobs:
           $conda_exe clean --all --yes
 
           ### zip envs
-          cd ""$HOME/envs"
+          cd "$HOME/envs"
           tar -caf "env-speciesnet.tar.xz" "env-speciesnet"
 
           ### upload 
