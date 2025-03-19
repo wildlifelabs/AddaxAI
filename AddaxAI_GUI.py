@@ -3,7 +3,7 @@
 # GUI to simplify camera trap image analysis with species recognition models
 # https://addaxdatascience.com/addaxai/
 # Created by Peter van Lunteren
-# Latest edit by Peter van Lunteren on 18 Mar 2025
+# Latest edit by Peter van Lunteren on 19 Mar 2025
 
 # TODO: CLEAN - if the processing is done, and a image is deleted before the post processing, it crashes and just stops, i think it should just skip the file and then do the rest. I had to manually delete certain entries from the image_recognition_file.json to make it work
 # TODO: RESUME DOWNLOAD - make some sort of mechanism that either continues the model download when interrupted, or downloads it to /temp/ folder and only moves it to the correct location after succesful download. Otherwise delete from /temp/. That makes sure that users will not be able to continue with half downloaded models. 
@@ -530,24 +530,7 @@ def postprocess(src_dir, dst_dir, thresh, sep, file_placement, sep_conf, vis, cr
         # collect info to append to csv files
         if exp:
             # file info CSV
-            if len(bbox_info) > 0: # try to fetch existing values
-                file_height = bbox_info[0][7]
-                file_width = bbox_info[0][8]
-            else: # only read dimensions if no detections are present
-                if data_type == "img":
-                    with Image.open(os.path.normpath(os.path.join(src_dir, file))) as pil_img:
-                        file_width, file_height = pil_img.size
-                elif data_type == "vid":
-                    video_path = os.path.normpath(os.path.join(src_dir, file))
-                    cap = cv2.VideoCapture(video_path)
-                    if cap.isOpened():
-                        file_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-                        file_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-                        cap.release()
-                else:
-                    file_width = "NA"
-                    file_height = "NA"
-            row = pd.DataFrame([[src_dir, file, data_type, len(bbox_info), file_height, file_width, max_detection_conf, manually_checked, *exif_params]])
+            row = pd.DataFrame([[src_dir, file, data_type, len(bbox_info), height, width, max_detection_conf, manually_checked, *exif_params]])
             row.to_csv(csv_for_files, encoding='utf-8', mode='a', index=False, header=False)
 
             # detections info CSV
@@ -685,7 +668,7 @@ def postprocess(src_dir, dst_dir, thresh, sep, file_placement, sep_conf, vis, cr
     if exp and exp_format == dpd_options_exp_format[lang_idx][2]: # COCO
         
         # init vars
-        coco_path = os.path.join(dst_dir, "results_coco.json")
+        coco_path = os.path.join(dst_dir, f"results_coco_{data_type}.json")
         detections_df = pd.read_csv(os.path.join(dst_dir, f"results_detections.csv"), dtype=dtypes, low_memory=False)
         files_df = pd.read_csv(os.path.join(dst_dir, f"results_files.csv"), dtype=dtypes, low_memory=False)
         
