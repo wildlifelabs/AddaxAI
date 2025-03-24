@@ -529,6 +529,18 @@ def postprocess(src_dir, dst_dir, thresh, sep, file_placement, sep_conf, vis, cr
         
         # collect info to append to csv files
         if exp:
+
+            # read shape again - this is a temporary solution
+            # read in the hieght and width of the images and videos, as this was giving a bunch of bugs...
+            if data_type == "img":
+                img = cv2.imread(os.path.normpath(os.path.join(src_dir, file)))
+                height, width = img.shape[:2]
+            else:
+                cap = cv2.VideoCapture(os.path.join(src_dir, file))
+                width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+                height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+                cap.release()
+
             # file info CSV
             row = pd.DataFrame([[src_dir, file, data_type, len(bbox_info), height, width, max_detection_conf, manually_checked, *exif_params]])
             row.to_csv(csv_for_files, encoding='utf-8', mode='a', index=False, header=False)
