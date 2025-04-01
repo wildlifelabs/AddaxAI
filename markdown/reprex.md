@@ -3,7 +3,7 @@ To help us resolve issues quickly, we need to be able to reproduce the problem o
 
 A minimal reproducible example does not necessarily mean using the fewest possible images. Instead, it means identifying what is causing the error. The issue might stem from the input data, but it could also be related to specific settings or configurations.
 
-Your goal is to pinpoint the root cause so that we can recreate the problem. If the issue is caused by specific images, please send those images. However, if the problem arises due to certain settings (e.g., Setting A combined with Setting B and C) and occurs regardless of the input data, there is no need to send images or videos—just provide the relevant settings.
+Your goal is to pinpoint the root cause so that we can recreate the problem. If the issue is caused by specific images, please send those images. However, if the problem arises due to certain settings (e.g., model A in mode B combined with setting C and D) and occurs regardless of the input data, there is no need to send images or videos—just provide the relevant settings.
 
 By narrowing down the cause, you make it easier for us to diagnose and fix the issue efficiently.
 
