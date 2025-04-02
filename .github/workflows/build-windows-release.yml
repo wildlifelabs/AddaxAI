@@ -191,6 +191,83 @@ jobs:
           is_recursive: false
           delete_if_exists: true
 
+      - name: Build env-pytorch-trial
+        shell: cmd
+        run: |
+
+          echo off
+          @setlocal EnableDelayedExpansion
+          
+          @REM init environment vars
+          set conda_exe=${{ env.CONDA_DIR }}\Scripts\conda.exe
+          mkdir "${{ github.workspace }}\temp"
+
+          @REM set high timeout value and ip address for ipv4 fallback issues
+          call "%conda_exe%" config --set remote_connect_timeout_secs 120
+          call "%conda_exe%" config --set remote_max_retries 5
+          call "%conda_exe%" config --set remote_read_timeout_secs 120
+          call "%conda_exe%" config --set ssl_verify False
+          call "%conda_exe%" config --set fetch_threads 2
+          call "%conda_exe%" config --show
+
+          @REM set IPv4
+          set PIP_NO_IPV6=1
+          set CONDA_SSL_VERIFY=0
+          set CONDA_USE_IPV4=1
+          
+          @REM install mamba
+          call "%conda_exe%" install -n base -c conda-forge mamba -y
+          set conda_exe=${{ env.CONDA_DIR }}\condabin\mamba.bat
+          
+          @REM build env-pytorch-trial
+          call "%conda_exe%" create -p "${{ github.workspace }}\temp\env-pytorch-trial" python=3.8 -y
+          call "%conda_exe%" run -p "${{ github.workspace }}\temp\env-pytorch-trial" pip install --timeout=120 torch==2.3.0 torchvision==0.18.0 torchaudio==2.3.0 --index-url https://download.pytorch.org/whl/cu118 --trusted-host download.pytorch.org
+          call "%conda_exe%" run -p "${{ github.workspace }}\temp\env-pytorch-trial" pip install --timeout=120 ultralytics==8.0.230
+          call "%conda_exe%" run -p "${{ github.workspace }}\temp\env-pytorch-trial" pip install --timeout=120 timm
+          call "%conda_exe%" run -p "${{ github.workspace }}\temp\env-pytorch-trial" pip install --timeout=120 pandas
+          call "%conda_exe%" run -p "${{ github.workspace }}\temp\env-pytorch-trial" pip install --timeout=120 numpy
+          call "%conda_exe%" run -p "${{ github.workspace }}\temp\env-pytorch-trial" pip install --timeout=120 opencv-python
+          call "%conda_exe%" run -p "${{ github.workspace }}\temp\env-pytorch-trial" pip install --timeout=120 pillow
+          call "%conda_exe%" run -p "${{ github.workspace }}\temp\env-pytorch-trial" pip install --timeout=120 dill
+          call "%conda_exe%" run -p "${{ github.workspace }}\temp\env-pytorch-trial" pip install --timeout=120 hachoir
+          call "%conda_exe%" run -p "${{ github.workspace }}\temp\env-pytorch-trial" pip install --timeout=120 versions
+          call "%conda_exe%" run -p "${{ github.workspace }}\temp\env-pytorch-trial" pip install --timeout=120 jsonpickle
+
+          @REM clean
+          call "%conda_exe%" clean --all --yes --force-pkgs-dirs
+
+          @REM zip
+          "C:\Program Files\7-Zip\7z.exe" a -tzip -mx9 "${{ github.workspace }}\temp\env-pytorch-trial.zip" "${{ github.workspace }}\temp\env-pytorch-trial"
+
+          @REM remove folder contents
+          rmdir /s /q "${{ github.workspace }}\temp\env-pytorch-trial"
+
+      - name: Upload pinned version of env-pytorch-trial.zip
+        uses: LanceMcCarthy/Action-AzureBlobUpload@v2
+        with:
+          connection_string: ${{ secrets.AZURE_CONNECTION_STRING }}
+          container_name: ${{ env.BUCKET_NAME }}
+          source_folder: ${{ github.workspace }}\temp
+          destination_folder: ${{ env.RELEASE_VERSION }}/windows/envs
+          is_recursive: false
+          delete_if_exists: true
+
+      - name: Upload latest version of env-pytorch-trial.zip
+        uses: LanceMcCarthy/Action-AzureBlobUpload@v2
+        with:
+          connection_string: ${{ secrets.AZURE_CONNECTION_STRING }}
+          container_name: ${{ env.BUCKET_NAME }}
+          source_folder: ${{ github.workspace }}\temp
+          destination_folder: latest/windows/envs
+          is_recursive: false
+          delete_if_exists: true
+
+      - name: Remove env-pytorch-trial.zip
+        shell: cmd
+        run: |
+          del "${{ github.workspace }}\temp\env-pytorch-trial.zip"
+          rmdir /s /q "${{ github.workspace }}\temp"
+
       - name: Remove env-tensorflow-v1.zip
         shell: cmd
         run: |
