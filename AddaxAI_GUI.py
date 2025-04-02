@@ -684,39 +684,38 @@ def postprocess(src_dir, dst_dir, thresh, sep, file_placement, sep_conf, vis, cr
     if exp and exp_format == dpd_options_exp_format[lang_idx][3]: # if exp_format is the third option in the dropdown menu -> TSV
 
         # Check if the TSV file exists, e.g., when processing both img and vid
-        for result_type in ['detections', 'files']:
-            csv_path = os.path.join(dst_dir, f"results_{result_type}.csv")
-            tsv_path = os.path.join(dst_dir, f"results_{result_type}.tsv")
+        csv_path = os.path.join(dst_dir, f"results_detections.csv")
+        tsv_path = os.path.join(dst_dir, f"results_sensing_clues.tsv")
 
-            if os.path.isfile(tsv_path):  # Append if TSV exists
-                with open(csv_path, 'r', newline='') as csv_file, open(tsv_path, 'a', newline='') as tsv_file:
-                    csv_reader = csv.reader(x.replace('\0', '') for x in csv_file)
-                    tsv_writer = csv.writer(tsv_file, delimiter='\t')
+        if os.path.isfile(tsv_path):  # Append if TSV exists
+            with open(csv_path, 'r', newline='') as csv_file, open(tsv_path, 'a', newline='') as tsv_file:
+                csv_reader = csv.reader(x.replace('\0', '') for x in csv_file)
+                tsv_writer = csv.writer(tsv_file, delimiter='\t')
 
-                    csv_header = next(csv_reader)
-                    idx_date, idx_lat, idx_lon = map(csv_header.index, ["DateTimeOriginal", "Latitude", "Longitude"])
+                csv_header = next(csv_reader)
+                idx_date, idx_lat, idx_lon = map(csv_header.index, ["DateTimeOriginal", "Latitude", "Longitude"])
 
-                    for row in csv_reader:
-                        unique_id = generate_unique_id(row)
-                        formatted_date = format_datetime(row[idx_date])
-                        new_row = [unique_id, formatted_date, row[idx_lat], row[idx_lon], "AddaxAI"] + row
-                        tsv_writer.writerow(new_row)
+                for row in csv_reader:
+                    unique_id = generate_unique_id(row)
+                    formatted_date = format_datetime(row[idx_date])
+                    new_row = [unique_id, formatted_date, row[idx_lat], row[idx_lon], "AddaxAI"] + row
+                    tsv_writer.writerow(new_row)
 
-            else:  # Create new TSV file
-                with open(csv_path, 'r', newline='') as csv_file, open(tsv_path, 'w', newline='') as tsv_file:
-                    csv_reader = csv.reader(x.replace('\0', '') for x in csv_file)
-                    tsv_writer = csv.writer(tsv_file, delimiter='\t')
+        else:  # Create new TSV file
+            with open(csv_path, 'r', newline='') as csv_file, open(tsv_path, 'w', newline='') as tsv_file:
+                csv_reader = csv.reader(x.replace('\0', '') for x in csv_file)
+                tsv_writer = csv.writer(tsv_file, delimiter='\t')
 
-                    csv_header = next(csv_reader)
-                    idx_date, idx_lat, idx_lon = map(csv_header.index, ["DateTimeOriginal", "Latitude", "Longitude"])
+                csv_header = next(csv_reader)
+                idx_date, idx_lat, idx_lon = map(csv_header.index, ["DateTimeOriginal", "Latitude", "Longitude"])
 
-                    tsv_writer.writerow(["ID", "Date", "Lat", "Lon", "Method"] + csv_header)
+                tsv_writer.writerow(["ID", "Date", "Lat", "Long", "Method"] + csv_header)
 
-                    for row in csv_reader:
-                        unique_id = generate_unique_id(row)
-                        formatted_date = format_datetime(row[idx_date])
-                        new_row = [unique_id, formatted_date, row[idx_lat], row[idx_lon], "AddaxAI"] + row
-                        tsv_writer.writerow(new_row)
+                for row in csv_reader:
+                    unique_id = generate_unique_id(row)
+                    formatted_date = format_datetime(row[idx_date])
+                    new_row = [unique_id, formatted_date, row[idx_lat], row[idx_lon], "AddaxAI"] + row
+                    tsv_writer.writerow(new_row)
 
         # plt needs the CSVs, so don't remove just yet
         if not plt:
@@ -778,11 +777,13 @@ def generate_unique_id(row):
     row_str = "".join(row).encode('utf-8')
     return hashlib.md5(row_str).hexdigest()
 
-
 def format_datetime(date_str):
-    """Convert 'DD/MM/YY HH:MM:SS' to 'YYYY-MM-DDTHH:MM:SS'."""
-    dt = datetime.datetime.strptime(date_str, "%d/%m/%y %H:%M:%S")
-    return dt.strftime("%Y-%m-%dT%H:%M:%S")
+    """Convert 'DD/MM/YY HH:MM:SS' to 'YYYY-MM-DDTHH:MM:SS', handle 'NA' gracefully."""
+    try:
+        dt = datetime.datetime.strptime(date_str, "%d/%m/%y %H:%M:%S")
+        return dt.strftime("%Y-%m-%dT%H:%M:%S")
+    except ValueError:
+        return 'NA'
 
 # convert csv to coco format
 def csv_to_coco(detections_df, files_df, output_path):
