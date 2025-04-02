@@ -154,9 +154,12 @@ jobs:
           @REM install mamba
           call "%conda_exe%" install -n base -c conda-forge mamba -y
           set conda_exe=${{ env.CONDA_DIR }}\condabin\mamba.bat
-          
+
+          @REM Download yml file from url
+          curl --ipv4 -o "${{ github.workspace }}\tensorflow-linux-windows.yml" "https://raw.githubusercontent.com/PetervanLunteren/AddaxAI/main/classification_utils/envs/tensorflow-linux-windows.yml"
+
           @REM build env-tensorflow-v1
-          call "%conda_exe%" env create --file "%root%\AddaxAI\classification_utils\envs\tensorflow-linux-windows.yml" -p "%root%\envs\env-tensorflow-v1"
+          call "%conda_exe%" env create --file "${{ github.workspace }}\tensorflow-linux-windows.yml" -p "${{ github.workspace }}\envs\env-tensorflow-v1"
 
           @REM clean
           call "%conda_exe%" clean --all --yes --force-pkgs-dirs
