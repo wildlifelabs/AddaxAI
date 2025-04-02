@@ -191,6 +191,12 @@ jobs:
           is_recursive: false
           delete_if_exists: true
 
+      - name: Remove env-tensorflow-v1.zip
+        shell: cmd
+        run: |
+          del "${{ github.workspace }}\temp\env-tensorflow-v1.zip"
+          rmdir /s /q "${{ github.workspace }}\temp"
+
       - name: Build env-pytorch-trial
         shell: cmd
         run: |
@@ -266,12 +272,6 @@ jobs:
         shell: cmd
         run: |
           del "${{ github.workspace }}\temp\env-pytorch-trial.zip"
-          rmdir /s /q "${{ github.workspace }}\temp"
-
-      - name: Remove env-tensorflow-v1.zip
-        shell: cmd
-        run: |
-          del "${{ github.workspace }}\temp\env-tensorflow-v1.zip"
           rmdir /s /q "${{ github.workspace }}\temp"
 
       - name: Build env-tensorflow-v2
