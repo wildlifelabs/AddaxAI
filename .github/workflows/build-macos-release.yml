@@ -449,7 +449,7 @@ jobs:
           echo "Hello world!" >> "${root}/first-startup.txt"
           
           ## clone repositories
-          git clone --ipv4 --depth 1 --branch $BRANCH_NAME https://github.com/PetervanLunteren/EcoAssist.git "${root}/AddaxAI"
+          git clone --ipv4 --depth 1 --branch $BRANCH_NAME https://github.com/PetervanLunteren/AddaxAI.git "${root}/AddaxAI"
           rm -rf "${root}/AddaxAI/.git"
           mv "${root}/AddaxAI/main.py" "${root}/main.py"
           RAW_VERSION=${{ env.RELEASE_VERSION }}
