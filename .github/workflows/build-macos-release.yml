@@ -151,7 +151,7 @@ jobs:
           conda_exe="$HOME/miniforge/bin/mamba"
 
           ### install env-tensorflow-v1
-          $conda_exe env create --file="${root}/EcoAssist/classification_utils/envs/tensorflow-macos-silicon.yml" -p "${root}/envs/env-tensorflow"
+          $conda_exe env create --file="${root}/EcoAssist/classification_utils/envs/tensorflow-macos-silicon.yml" -p "${root}/envs/env-tensorflow-v1"
 
           ### clean
           $conda_exe clean --all --yes --force-pkgs-dirs
